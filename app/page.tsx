@@ -7,13 +7,16 @@ import { useState } from "react";
 export default function MSTClientForm() {
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState<null | { ok: boolean; msg: string }>(null);
+  const [showModal, setShowModal] = useState(false);
   const [associatedEntities, setAssociatedEntities] = useState<number[]>([1, 2, 3]);
   const [clientServices, setClientServices] = useState<number[]>([1, 2, 3]);
+  const url = "http://localhost:5678/webhook-test/2570b966-3b9d-4dd6-981d-53cf2a79e2aa";
 
   async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setSubmitting(true);
     setSubmitted(null);
+    setShowModal(true);
 
     const form = e.currentTarget;
     const fd = new FormData(form);
@@ -37,12 +40,13 @@ export default function MSTClientForm() {
     try {
       // TODO: wire this to your API route (e.g., /api/mst-client) or external endpoint
       console.log("MST Client Intake:", data);
-      const res = await axios.post("https://primary-production-e14f.up.railway.app/webhook-test/example-webhook", data, {
-        headers: { "Content-Type": "application/json" }
-      });
+      const res = await axios.post(url, data, { headers: { "Content-Type": "application/json" } });
       
       if (res.status === 200) console.log("Form submitted successfully");
-      setSubmitted({ ok: true, msg: "Saved locally (console). Connect an API to persist." });
+      setSubmitted({
+        ok: true,
+        msg: "Thank you! Your form has been sent to our team for review.",
+      });
       form.reset();
     } catch (err) {
       console.error(err);
@@ -137,22 +141,28 @@ export default function MSTClientForm() {
               <div className="mt-2 grid gap-3">
                 <input name="primary_name_title" className="rounded-lg border p-2" placeholder="Name (Title)" />
                 <input name="primary_phone" className="rounded-lg border p-2" placeholder="Phone" />
-                <input name="primary_email" type="email" className="rounded-lg border p-2" placeholder="Email" />
+                <input name="primary_email" type="email" className="rounded-lg border p-2" placeholder="Email" required/>
                 <div className="grid gap-2">
                   <span className="text-sm">Contact for</span>
-                  <div className="flex flex-wrap gap-3">
-                    {[
-                      { v: "Everything", l: "Everything" },
-                      { v: "Accounting", l: "Accounting" },
-                      { v: "Payroll", l: "Payroll" },
-                      { v: "Other", l: "Other" }
-                    ].map((o) => (
-                      <label key={o.v} className="inline-flex items-center gap-2">
-                        <input type="checkbox" name="primary_contact_for" value={o.v} className="h-4 w-4" />
-                        <span>{o.l}</span>
-                      </label>
-                    ))}
-                    <input name="primary_contact_other" className="rounded-lg border p-2" placeholder="If Other, describe" />
+                  <div className="flex flex-col gap-2 sm:flex-row sm:flex-wrap sm:gap-3">
+                    <div className="flex flex-wrap gap-3">
+                      {[
+                        { v: "Everything", l: "Everything" },
+                        { v: "Accounting", l: "Accounting" },
+                        { v: "Payroll", l: "Payroll" },
+                        { v: "Other", l: "Other" }
+                      ].map((o) => (
+                        <label key={o.v} className="inline-flex items-center gap-2">
+                          <input type="checkbox" name="primary_contact_for" value={o.v} className="h-4 w-4" />
+                          <span>{o.l}</span>
+                        </label>
+                      ))}
+                    </div>
+                    <input
+                      name="primary_contact_other"
+                      className="rounded-lg border p-2 sm:min-w-[220px]"
+                      placeholder="If Other, describe"
+                    />
                   </div>
                 </div>
               </div>
@@ -297,9 +307,13 @@ export default function MSTClientForm() {
                 <input type="checkbox" name="needs_federal_income_tax_prep" className="h-4 w-4" />
                 <span>Federal Income Tax Preparation</span>
               </div>
-              <div className="flex gap-4 pl-6">
-                <label className="inline-flex items-center gap-2"><input type="radio" name="federal_tax_type" value="Business" /> Business</label>
-                <label className="inline-flex items-center gap-2"><input type="radio" name="federal_tax_type" value="Personal" /> Personal</label>
+              <div className="flex flex-col gap-2 pl-0 sm:flex-row sm:gap-4 sm:pl-6">
+                <label className="inline-flex items-center gap-2">
+                  <input type="radio" name="federal_tax_type" value="Business" /> Business
+                </label>
+                <label className="inline-flex items-center gap-2">
+                  <input type="radio" name="federal_tax_type" value="Personal" /> Personal
+                </label>
               </div>
             </div>
             <div className="grid gap-2 sm:grid-cols-2">
@@ -346,7 +360,7 @@ export default function MSTClientForm() {
           <div className="mt-4 grid gap-4">
             <div className="grid gap-2">
               <span className="text-sm font-medium">Reporting Frequency</span>
-              <div className="flex w-full justify-between gap-4">
+              <div className="flex flex-col gap-2 sm:flex-row sm:flex-wrap sm:justify-between sm:gap-4">
                 {["Weekly", "Monthly", "Quarterly", "Annual"].map((f) => (
                   <label key={f} className="inline-flex items-center gap-2">
                     <input type="radio" name="reporting_frequency" value={f} />
@@ -365,7 +379,7 @@ export default function MSTClientForm() {
             </label>
             <div className="grid gap-2">
               <span className="text-sm font-medium">Payroll Processing Period</span>
-              <div className="flex w-full justify-between gap-4">
+              <div className="flex flex-col gap-2 sm:flex-row sm:flex-wrap sm:justify-between sm:gap-4">
                 {["Biweekly", "1st & 15th", "15th & Last", "Monthly"].map((p) => (
                   <label key={p} className="inline-flex items-center gap-2">
                     <input type="radio" name="payroll_processing_period" value={p} />
@@ -510,6 +524,65 @@ export default function MSTClientForm() {
           )}
         </div>
       </form>
+      {/* Modal */}
+      {showModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+          <div className="mx-4 w-full max-w-md rounded-2xl bg-white p-6 shadow-lg">
+            <div className="flex flex-col items-center gap-4 text-center">
+              {submitting ? (
+                // Larger animated spinner while submitting
+                <div className="flex h-20 w-20 items-center justify-center">
+                  <div className="h-16 w-16 rounded-full border-4 border-gray-300 border-t-gray-900 animate-spin" />
+                </div>
+              ) : submitted?.ok ? (
+                // Larger success badge
+                <div className="flex h-20 w-20 items-center justify-center rounded-full bg-green-100 text-green-700 animate-pulse">
+                  <span className="text-4xl">✓</span>
+                </div>
+              ) : (
+                // Larger error badge
+                <div className="flex h-20 w-20 items-center justify-center rounded-full bg-red-100 text-red-700">
+                  <span className="text-4xl">!</span>
+                </div>
+              )}
+
+              <div>
+                <h2 className="text-lg font-semibold">
+                  {submitting
+                    ? "Submitting your information..."
+                    : submitted?.ok
+                    ? "Submission complete"
+                    : "Submission issue"}
+                </h2>
+                <p className="mt-2 text-sm text-gray-600">
+                  {submitting
+                    ? "Please wait while we send your responses to our system. This may take a few moments."
+                    : submitted?.msg}
+                </p>
+              </div>
+            </div>
+
+            {!submitting && (
+              <div className="mt-4 flex justify-end">
+                <button
+                  type="button"
+                  onClick={() => {
+                    const wasSuccessful = submitted?.ok;
+                    setShowModal(false);
+                    setSubmitted(null);
+                    if (wasSuccessful && typeof window !== "undefined") {
+                      window.location.href = "https://mstcpatx.com/";
+                    }
+                  }}
+                  className="rounded-lg border px-4 py-2 text-sm font-medium"
+                >
+                  Close
+                </button>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
     </main>
   );
 }
