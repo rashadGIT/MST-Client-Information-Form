@@ -60,7 +60,7 @@ export default function MSTClientForm() {
 
   return (
     <main className="mx-auto max-w-3xl p-6">
-      <h1 className="text-2xl font-bold tracking-tight">MST — Client Information Formssss</h1>
+      <h1 className="text-2xl font-bold tracking-tight">MST — Client Information Form</h1>
       {/* <p className="mt-1 text-sm text-gray-600">Fill out the details below. Fields mirror the original PDF.</p> */}
 
       <form onSubmit={onSubmit} className="mt-6 space-y-8">
