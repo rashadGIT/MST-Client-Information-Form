@@ -10,7 +10,9 @@ export default function MSTClientForm() {
   const [showModal, setShowModal] = useState(false);
   const [associatedEntities, setAssociatedEntities] = useState<number[]>([1, 2, 3]);
   const [clientServices, setClientServices] = useState<number[]>([1, 2, 3]);
-  const url = "http://localhost:5678/webhook-test/2570b966-3b9d-4dd6-981d-53cf2a79e2aa";
+  const url =
+    process.env.NEXT_PUBLIC_MST_WEBHOOK_URL ||
+    "http://localhost:5678/webhook-test/2570b966-3b9d-4dd6-981d-53cf2a79e2aa";
 
   async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -184,7 +186,7 @@ export default function MSTClientForm() {
           <h2 className="text-lg font-semibold">Business Operations Summary</h2>
           <p className="mt-1 text-sm text-gray-600">
             <b>Description of Goods or Services: </b>
-            Provide a concise overview of what the client's business does — 
+            Provide a concise overview of what the client&apos;s business does — 
             include the main products, services, or solutions offered. 
             Summarize this from their website or official materials, 
             focusing on what they provide, who they serve, and their core value proposition.
@@ -353,7 +355,7 @@ export default function MSTClientForm() {
           <h2 className="text-lg font-semibold">Deadlines</h2>
           <p className="mt-1 text-sm text-gray-600">
             <b>Client External Reporting Requirements</b><br />
-            List all key reporting or submission deadlines related to the client's external 
+            List all key reporting or submission deadlines related to the client&apos;s external 
             obligations — e.g., loans, regulatory filings, tax reports, investor 
             updates, or compliance documents.
           </p>
