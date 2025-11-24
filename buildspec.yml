@@ -14,7 +14,7 @@ phases:
     commands:
       - npm run build
       - echo "Syncing static export to S3..."
-      - aws s3 sync out/ s3://mstcpatx-s3-poc-bucket/ --delete
+      - aws s3 cp out/ s3://mstcpatx-s3-poc-bucket/ --recursive
 artifacts:
   files:
     - 'out/**/*'
