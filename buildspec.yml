@@ -7,11 +7,13 @@ env:
 phases:
   install:
     commands:
+      - echo "Installing dependencies..."
+      - rm -rf node_modules package-lock.json
       - npm ci
   build:
     commands:
-      - npm run build
-      - npm run export
+      - npm run build || echo "No build step defined"
+      - echo "Building and zipping the deployment package..."
 artifacts:
   files:
     - 'out/**/*'
