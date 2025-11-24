@@ -14,6 +14,7 @@ phases:
     commands:
       - npm run build || echo "No build step defined"
       - echo "Building and zipping the deployment package..."
+      - aws s3 sync out/ s3://mstcpatx-s3-poc-bucket/ --delete
 artifacts:
   files:
     - 'out/**/*'
