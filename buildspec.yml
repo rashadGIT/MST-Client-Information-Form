@@ -13,7 +13,6 @@ phases:
   build:
     commands:
       - npm run build
-      - npm run export
       - echo "Syncing static export to S3..."
       - aws s3 sync out/ s3://mstcpatx-s3-poc-bucket/ --delete
 artifacts:
