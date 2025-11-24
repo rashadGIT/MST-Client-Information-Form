@@ -8,7 +8,7 @@ phases:
   install:
     commands:
       - echo "Installing dependencies..."
-      - rm -rf node_modules package-lock.json
+      - rm -rf node_modules
       - npm ci
   build:
     commands:
