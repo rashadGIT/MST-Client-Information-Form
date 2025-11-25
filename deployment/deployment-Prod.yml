@@ -2,7 +2,7 @@ version: 0.2
 
 env:
   variables:
-    NEXT_PUBLIC_MST_WEBHOOK_URL: "https://your-real-webhook-url-here"
+    NEXT_PUBLIC_MST_WEBHOOK_URL: "https://rashadbarnett.app.n8n.cloud/webhook/2570b966-3b9d-4dd6-981d-53cf2a79e2aa"
 
 phases:
   install:
